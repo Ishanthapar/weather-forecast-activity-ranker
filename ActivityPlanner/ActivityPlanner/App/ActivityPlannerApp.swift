@@ -10,6 +10,12 @@ import SwiftData
 
 @main
 struct ActivityPlannerApp: App {
+    private let container: AppContainer
+    
+    init() {
+        self.container = AppContainer()
+    }
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,

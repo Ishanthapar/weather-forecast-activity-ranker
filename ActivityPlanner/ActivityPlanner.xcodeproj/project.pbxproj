@@ -29,14 +29,61 @@
 		864FFA303098894900901765 /* ActivityPlannerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ActivityPlannerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		86A31EC43098BD0F007BADB9 /* Exceptions for "ActivityPlanner" folder in "ActivityPlannerTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/AppContainer.swift,
+				Features/LocationSearch/GeocodingModels.swift,
+				Features/LocationSearch/GeocodingService.swift,
+				Networking/APIClient.swift,
+				Networking/APIError.swift,
+			);
+			target = 864FFA253098894900901765 /* ActivityPlannerTests */;
+		};
+		86A31EC53098BD0F007BADB9 /* Exceptions for "ActivityPlanner" folder in "ActivityPlannerUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/AppContainer.swift,
+				Features/LocationSearch/GeocodingModels.swift,
+				Features/LocationSearch/GeocodingService.swift,
+				Networking/APIClient.swift,
+				Networking/APIError.swift,
+			);
+			target = 864FFA2F3098894900901765 /* ActivityPlannerUITests */;
+		};
+		86A31EE53098F309007BADB9 /* Exceptions for "ActivityPlannerTests" folder in "ActivityPlanner" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				GeocodingServiceTests.swift,
+			);
+			target = 864FFA163098894400901765 /* ActivityPlanner */;
+		};
+		86A31EE63098F309007BADB9 /* Exceptions for "ActivityPlannerTests" folder in "ActivityPlannerUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				GeocodingServiceTests.swift,
+			);
+			target = 864FFA2F3098894900901765 /* ActivityPlannerUITests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		864FFA193098894400901765 /* ActivityPlanner */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				86A31EC43098BD0F007BADB9 /* Exceptions for "ActivityPlanner" folder in "ActivityPlannerTests" target */,
+				86A31EC53098BD0F007BADB9 /* Exceptions for "ActivityPlanner" folder in "ActivityPlannerUITests" target */,
+			);
 			path = ActivityPlanner;
 			sourceTree = "<group>";
 		};
 		864FFA293098894900901765 /* ActivityPlannerTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				86A31EE53098F309007BADB9 /* Exceptions for "ActivityPlannerTests" folder in "ActivityPlanner" target */,
+				86A31EE63098F309007BADB9 /* Exceptions for "ActivityPlannerTests" folder in "ActivityPlannerUITests" target */,
+			);
 			path = ActivityPlannerTests;
 			sourceTree = "<group>";
 		};
