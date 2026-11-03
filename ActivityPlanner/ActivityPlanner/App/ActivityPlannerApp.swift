@@ -31,7 +31,9 @@ struct ActivityPlannerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(
+                geocodingService: container.geocodingService
+            )
         }
         .modelContainer(sharedModelContainer)
     }

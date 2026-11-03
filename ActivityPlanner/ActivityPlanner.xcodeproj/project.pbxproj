@@ -36,6 +36,8 @@
 				App/AppContainer.swift,
 				Features/LocationSearch/GeocodingModels.swift,
 				Features/LocationSearch/GeocodingService.swift,
+				Features/LocationSearch/LocationSearchView.swift,
+				Features/LocationSearch/LocationSearchViewModel.swift,
 				Networking/APIClient.swift,
 				Networking/APIError.swift,
 			);
@@ -47,6 +49,8 @@
 				App/AppContainer.swift,
 				Features/LocationSearch/GeocodingModels.swift,
 				Features/LocationSearch/GeocodingService.swift,
+				Features/LocationSearch/LocationSearchView.swift,
+				Features/LocationSearch/LocationSearchViewModel.swift,
 				Networking/APIClient.swift,
 				Networking/APIError.swift,
 			);
