@@ -51,3 +51,135 @@ final class MockURLProtocol: URLProtocol {
     
     override func stopLoading() {}
 }
+
+final class APIClientTests: XCTestCase {
+    private var session: URLSession!
+    private var sut: APIClient!
+    
+    override func setUp() {
+        super.setUp()
+        
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        
+        session = URLSession(configuration: configuration)
+        sut = APIClient(session: session)
+    }
+    
+    override func tearDown() {
+        MockURLProtocol.requestHandler = nil
+        session.invalidateAndCancel()
+        
+        session = nil
+        sut = nil
+        
+        super.tearDown()
+    }
+    
+    func testServerSuccessWithDecodableResponse() async throws {
+        let expectedPayload = """
+            {
+                "name": "Mumbai"
+            }
+            """
+        
+        MockURLProtocol.requestHandler = { request in
+            XCTAssertEqual(request.httpMethod, "GET")
+            XCTAssertEqual(request.value(forHTTPHeaderField: "Accept"), "application/json")
+            
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            
+            return (response, Data(expectedPayload.utf8))
+        }
+        
+        let url = URL(string: "https://example.com/test")!
+        
+        let result = try await sut.get(
+            TestPayload.self, from: url
+        )
+        
+        XCTAssertEqual(result.name, "Mumbai")
+    }
+    
+    func testServerError() async {
+        let errorPayload = """
+            {
+                "reason": "Invalid query parameter"
+            }
+            """
+        
+        MockURLProtocol.requestHandler = { request in
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 400,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            
+            return (response, Data(errorPayload.utf8))
+        }
+        
+        let url = URL(string: "https://example.com/test")!
+        
+        do {
+            
+            let _: TestPayload = try await sut.get(
+                TestPayload.self,
+                from: url
+            )
+            
+        } catch let error as APIError {
+            guard case let .httpStatus(code, message) = error else {
+                return XCTFail("Unexpected APIError: \(error)")
+            }
+            
+            XCTAssertEqual(code, 400)
+            XCTAssertEqual(message, "Invalid query parameter")
+
+            
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+    
+    func testInvalidResponseAndDecodingError() async {
+        MockURLProtocol.requestHandler = { request in
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            
+            return (response, Data("not valid JSON".utf8))
+        }
+        
+        let url = URL(string: "https://example.com/test")!
+        
+        do {
+            let _: TestPayload = try await sut.get(
+                TestPayload.self,
+                from: url
+            )
+            
+            XCTFail("Expected a decoding error")
+            
+        } catch let error as APIError {
+            guard case .decodingFailed = error else {
+                return XCTFail("Unexpected APIError: \(error)")
+            }
+
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+}
+
+private struct TestPayload: Decodable {
+    let name: String
+}

@@ -52,20 +52,6 @@
 			);
 			target = 864FFA2F3098894900901765 /* ActivityPlannerUITests */;
 		};
-		86A31EE53098F309007BADB9 /* Exceptions for "ActivityPlannerTests" folder in "ActivityPlanner" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				GeocodingServiceTests.swift,
-			);
-			target = 864FFA163098894400901765 /* ActivityPlanner */;
-		};
-		86A31EE63098F309007BADB9 /* Exceptions for "ActivityPlannerTests" folder in "ActivityPlannerUITests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				GeocodingServiceTests.swift,
-			);
-			target = 864FFA2F3098894900901765 /* ActivityPlannerUITests */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -80,10 +66,6 @@
 		};
 		864FFA293098894900901765 /* ActivityPlannerTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				86A31EE53098F309007BADB9 /* Exceptions for "ActivityPlannerTests" folder in "ActivityPlanner" target */,
-				86A31EE63098F309007BADB9 /* Exceptions for "ActivityPlannerTests" folder in "ActivityPlannerUITests" target */,
-			);
 			path = ActivityPlannerTests;
 			sourceTree = "<group>";
 		};
