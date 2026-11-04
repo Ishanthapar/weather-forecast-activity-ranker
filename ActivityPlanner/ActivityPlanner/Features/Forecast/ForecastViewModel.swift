@@ -35,6 +35,15 @@ final class ForecastViewModel: ObservableObject {
     }
     
     func loadForecast() {
+        /// Avoid duplicate requests while loading or after success
+        if case .loading = state {
+            return
+        }
+        
+        if case .loaded = state {
+            return
+        }
+        
         /// Cancel existing request that may already be running
         forecastTask?.cancel()
         
@@ -42,6 +51,8 @@ final class ForecastViewModel: ObservableObject {
         
         forecastTask = Task {
             do {
+                try Task.checkCancellation()
+                
                 let forecast = try await forecastService.fetchForecast(
                     for: location
                 )

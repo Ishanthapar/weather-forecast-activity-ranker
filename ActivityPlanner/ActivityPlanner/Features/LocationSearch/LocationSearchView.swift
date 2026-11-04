@@ -172,24 +172,41 @@ struct LocationSearchView: View {
     private func selectedLocationView(
         _ location: GeocodedLocation
     ) -> some View {
-        HStack(spacing: 10) {
-            Image(systemName: "checkmark.circle.fill")
-                .foregroundStyle(.green)
-            
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Selected destination")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 10) {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
                 
-                Text(location.name)
-                    .font(.headline)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Selected destination")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    
+                    Text(location.name)
+                        .font(.headline)
+                    
+                    Text(locationSubtitle(for: location))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 
-                Text(locationSubtitle(for: location))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                Spacer()
             }
             
-            Spacer()
+            NavigationLink {
+                ForecastView(
+                    location: location,
+                    forecastService: weatherForecastService
+                )
+            } label: {
+                Label(
+                    "View 7-day forecast",
+                    systemImage: "cloud.sun"
+                )
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .accessibilityIdentifier("viewForecastButton")
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
