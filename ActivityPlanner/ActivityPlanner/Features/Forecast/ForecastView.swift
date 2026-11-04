@@ -110,6 +110,10 @@ struct ForecastView: View {
                     VStack(alignment: .leading, spacing: 20) {
                         locationHeader(forecast)
                         
+                        SuitabilityView(
+                            activitySuitabilities: viewModel.activitySuitabilities
+                        )
+                        
                         Text("7-day forecast")
                             .font(.title3)
                             .fontWeight(.semibold)
@@ -122,10 +126,6 @@ struct ForecastView: View {
                                 )
                             }
                         }
-                        
-                        SuitabilityView(
-                            activitySuitabilities: viewModel.activitySuitabilities
-                        )
                     }
                 }
                 .padding()
