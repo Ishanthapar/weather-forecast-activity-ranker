@@ -12,6 +12,7 @@ struct AppContainer {
     
     let geocodingService: any GeocodingServiceProtocol
     let weatherForecastService: any WeatherForecastServiceProtocol
+    let suitabilityScoringEngine: any SuitabilityScoringEngine
     
     // MARK: - Initialization
     
@@ -25,5 +26,7 @@ struct AppContainer {
         self.weatherForecastService = WeatherForecastService(
             apiClient: apiClient
         )
+        
+        self.suitabilityScoringEngine = WeatherSuitabilityScorer()
     }
 }

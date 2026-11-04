@@ -12,12 +12,15 @@ struct LocationSearchView: View {
     @StateObject private var viewModel: LocationSearchViewModel
     @State private var searchQuery = ""
     let weatherForecastService: any WeatherForecastServiceProtocol
+    let suitabilityScoringEngine: any SuitabilityScoringEngine
     
     init(
         geocodingService: any GeocodingServiceProtocol,
-        weatherForecastService: any WeatherForecastServiceProtocol
+        weatherForecastService: any WeatherForecastServiceProtocol,
+        suitabilityScoringEngine: any SuitabilityScoringEngine
     ) {
         self.weatherForecastService = weatherForecastService
+        self.suitabilityScoringEngine = suitabilityScoringEngine
         
         _viewModel = StateObject(
             wrappedValue: LocationSearchViewModel(
@@ -196,7 +199,8 @@ struct LocationSearchView: View {
             NavigationLink {
                 ForecastView(
                     location: location,
-                    forecastService: weatherForecastService
+                    forecastService: weatherForecastService,
+                    suitabilityScoringEngine: suitabilityScoringEngine
                 )
             } label: {
                 Label(

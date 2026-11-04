@@ -20,18 +20,22 @@ final class ForecastViewModel: ObservableObject {
     
     @Published private(set) var state: ForecastState = .idle
     
+    @Published private(set) var activitySuitabilities: [ActivitySuitability] = []
+    
     private let forecastService: any WeatherForecastServiceProtocol
     private let location: GeocodedLocation
+    private let suitabilityScoringEngine: any SuitabilityScoringEngine
     
     private var forecastTask: Task<Void, Never>?
     
     init(
         location: GeocodedLocation,
-        forecastService: any WeatherForecastServiceProtocol
+        forecastService: any WeatherForecastServiceProtocol,
+        suitabilityScoringEngine: any SuitabilityScoringEngine
     ) {
         self.location = location
         self.forecastService = forecastService
-        
+        self.suitabilityScoringEngine = suitabilityScoringEngine
     }
     
     func loadForecast() {
@@ -48,6 +52,7 @@ final class ForecastViewModel: ObservableObject {
         forecastTask?.cancel()
         
         state = .loading
+        activitySuitabilities = []
         
         forecastTask = Task {
             do {
@@ -63,6 +68,17 @@ final class ForecastViewModel: ObservableObject {
                     return
                 }
                 
+                let now = Date()
+                
+                let suitabilityResults = ActivityType.allCases.map { activity in
+                    suitabilityScoringEngine.calculateSuitability(
+                        for: activity,
+                        forecast: forecast,
+                        now: now
+                    )
+                }
+                
+                activitySuitabilities = suitabilityResults
                 state = .loaded(forecast)
                 
             } catch is CancellationError {
@@ -76,6 +92,7 @@ final class ForecastViewModel: ObservableObject {
                     return
                 }
                 
+                activitySuitabilities = []
                 state = .failed(error.localizedDescription)
             }
         }

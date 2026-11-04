@@ -16,14 +16,16 @@ struct ForecastView: View {
     
     init(
         location: GeocodedLocation,
-        forecastService: any WeatherForecastServiceProtocol
+        forecastService: any WeatherForecastServiceProtocol,
+        suitabilityScoringEngine: any SuitabilityScoringEngine
     ) {
         self.location = location
         
         _viewModel = StateObject(
             wrappedValue: ForecastViewModel(
                 location: location,
-                forecastService: forecastService
+                forecastService: forecastService,
+                suitabilityScoringEngine: suitabilityScoringEngine
             )
         )
     }
@@ -120,6 +122,10 @@ struct ForecastView: View {
                                 )
                             }
                         }
+                        
+                        SuitabilityView(
+                            activitySuitabilities: viewModel.activitySuitabilities
+                        )
                     }
                 }
                 .padding()

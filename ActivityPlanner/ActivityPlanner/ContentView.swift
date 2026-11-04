@@ -11,11 +11,13 @@ import SwiftData
 struct ContentView: View {
     let geocodingService: any GeocodingServiceProtocol
     let weatherForecastService: any WeatherForecastServiceProtocol
+    let suitabilityScoringEngine: any SuitabilityScoringEngine
     
     var body: some View {
         LocationSearchView(
             geocodingService: geocodingService,
-            weatherForecastService: weatherForecastService
+            weatherForecastService: weatherForecastService,
+            suitabilityScoringEngine: suitabilityScoringEngine
         )
     }
 }
