@@ -34,6 +34,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				App/AppContainer.swift,
+				Features/Forecast/WeatherForecastModels.swift,
+				Features/Forecast/WeatherForecastService.swift,
 				Features/LocationSearch/GeocodingModels.swift,
 				Features/LocationSearch/GeocodingService.swift,
 				Features/LocationSearch/LocationSearchView.swift,
@@ -47,6 +49,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				App/AppContainer.swift,
+				Features/Forecast/WeatherForecastModels.swift,
+				Features/Forecast/WeatherForecastService.swift,
 				Features/LocationSearch/GeocodingModels.swift,
 				Features/LocationSearch/GeocodingService.swift,
 				Features/LocationSearch/LocationSearchView.swift,
