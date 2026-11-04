@@ -9,15 +9,21 @@ import Foundation
 
 struct AppContainer {
     // MARK: - Dependencies
-    let urlSession: URLSession
+    
     let geocodingService: any GeocodingServiceProtocol
+    let weatherForecastService: any WeatherForecastServiceProtocol
     
     // MARK: - Initialization
-    init(
-        urlSession: URLSession = .shared
-    ) {
+    
+    init() {
         let apiClient = APIClient()
-        self.geocodingService = GeocodingService(apiClient: apiClient)
-        self.urlSession = urlSession
+        
+        self.geocodingService = GeocodingService(
+            apiClient: apiClient
+        )
+        
+        self.weatherForecastService = WeatherForecastService(
+            apiClient: apiClient
+        )
     }
 }
