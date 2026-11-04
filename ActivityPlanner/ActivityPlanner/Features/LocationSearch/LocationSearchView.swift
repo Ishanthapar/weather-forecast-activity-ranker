@@ -11,8 +11,14 @@ import SwiftUI
 struct LocationSearchView: View {
     @StateObject private var viewModel: LocationSearchViewModel
     @State private var searchQuery = ""
+    let weatherForecastService: any WeatherForecastServiceProtocol
     
-    init(geocodingService: any GeocodingServiceProtocol) {
+    init(
+        geocodingService: any GeocodingServiceProtocol,
+        weatherForecastService: any WeatherForecastServiceProtocol
+    ) {
+        self.weatherForecastService = weatherForecastService
+        
         _viewModel = StateObject(
             wrappedValue: LocationSearchViewModel(
                 geocodingService: geocodingService

@@ -32,7 +32,8 @@ struct ActivityPlannerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(
-                geocodingService: container.geocodingService
+                geocodingService: container.geocodingService,
+                weatherForecastService: container.weatherForecastService
             )
         }
         .modelContainer(sharedModelContainer)
