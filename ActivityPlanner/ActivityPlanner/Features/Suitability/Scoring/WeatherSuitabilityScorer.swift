@@ -354,10 +354,14 @@ struct WeatherSuitabilityScorer: SuitabilityScoringEngine {
             return 100
         }
         
-        if temperature < 18 {
+        if temperature < 12 {
             return ScoreCalculator.clamp(
-                100 - ((18 - temperature) * 5)
+                100 - ((60 - temperature) * 5)
             )
+        }
+        
+        if temperature > 45 {
+            return 0
         }
         
         return ScoreCalculator.clamp(
@@ -397,7 +401,7 @@ struct WeatherSuitabilityScorer: SuitabilityScoringEngine {
         windSpeed: Double
     ) -> Double {
         
-        if windSpeed <= 15 {
+        if windSpeed <= 2 {
             return 100
         }
         
@@ -406,7 +410,7 @@ struct WeatherSuitabilityScorer: SuitabilityScoringEngine {
         }
         
         return ScoreCalculator.clamp(
-            100 - ((windSpeed - 15) / 45 * 100)
+            100 - ((windSpeed - 2.0) / 45.0 * 100.0)
         )
     }
     

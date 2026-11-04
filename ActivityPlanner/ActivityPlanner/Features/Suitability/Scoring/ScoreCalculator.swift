@@ -41,7 +41,7 @@ enum ScoreCalculator {
         }
         
         let weightedScore = factors.reduce(0.0) {
-            $0 + clamp($1.score) + $1.weight
+            $0 + clamp($1.score) * $1.weight
         }
         
         return clamp(weightedScore / totalWeight)
