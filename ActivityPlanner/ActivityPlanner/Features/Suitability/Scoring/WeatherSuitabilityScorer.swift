@@ -31,6 +31,16 @@ struct WeatherSuitabilityScorer: SuitabilityScoringEngine {
         
         static let indoorBaselineScore = 55.0
         static let indoorDiscomfortWeight = 0.45
+        
+        /// Surfing weights
+        static let surfingWindWeight = 0.40
+        static let surfingWindGustWeight = 0.30
+        static let surfingPrecipitationWeight = 0.20
+        static let surfingWeatherConditionWeight = 0.10
+        
+        /// Surfing weather thresholds (km/h)
+        static let surfingMaximumWindSpeed = 35.0
+        static let surfingMaximumWindGust = 50.0
     }
     
     func calculateSuitability(
@@ -73,7 +83,12 @@ struct WeatherSuitabilityScorer: SuitabilityScoringEngine {
                 )
                 
             case .surfing:
-                score = nil
+                score = surfingScore(
+                    for: day,
+                    forecast: forecast,
+                    now: now,
+                    dateFormatter: dateFormatter
+                )
                 
             case .outdoorSightseeing:
                 score = outdoorSightseeingScore(
@@ -307,6 +322,90 @@ struct WeatherSuitabilityScorer: SuitabilityScoringEngine {
         )
     }
     
+    // MARK: - Surfing
+    private func surfingScore(
+        for day: ForecastDay,
+        forecast: WeatherForecast,
+        now: Date,
+        dateFormatter: DateFormatter
+    ) -> Double? {
+        let hours = daytimeForecastHours(
+            for: day,
+            forecast: forecast,
+            now: now,
+            dateFormatter: dateFormatter
+        )
+        
+        guard !hours.isEmpty else {
+            return nil
+        }
+        
+        let windSpeeds = hours.compactMap(\.windSpeed)
+        let windGusts = hours.compactMap(\.windGusts)
+        
+        let precipitationScores = hours.compactMap { hour -> Double? in
+            
+            guard
+                let precipitation = hour.precipitation ?? hour.rain,
+                let probability = hour.precipitationProbability
+            else {
+                return nil
+            }
+            
+            let amountScore = precipitationScore(amount: precipitation)
+            
+            let probabilityScore = ScoreCalculator.clamp(100 - probability)
+            
+            return ScoreCalculator.weightedAverage(
+                factors: [
+                    (score: amountScore, weight: 0.70),
+                    (score: probabilityScore, weight: 0.30)
+                ]
+            )
+        }
+        
+        let weatherConditionScores = hours.compactMap { hour in
+            hour.weatherCode.map(weatherConditionScore)
+        }
+        
+        guard
+            let averageWindSpeed = average(windSpeeds),
+            let maximumWindGust = maximum(windGusts),
+            let averagePrecipitationScore = average(precipitationScores),
+            let averageWeatherConditionScore = average(weatherConditionScores)
+        else {
+            return nil
+        }
+        
+        let windFactor = surfingWindScore(
+            windSpeed: averageWindSpeed
+        )
+        
+        let windGustFactor = surfingWindGustScore(
+            windGust: maximumWindGust
+        )
+        
+        return ScoreCalculator.weightedAverage(
+            factors: [
+                (
+                    score: windFactor,
+                    weight: Configuration.surfingWindWeight
+                ),
+                (
+                    score: windGustFactor,
+                    weight: Configuration.surfingWindGustWeight
+                ),
+                (
+                    score: averagePrecipitationScore,
+                    weight: Configuration.surfingPrecipitationWeight
+                ),
+                (
+                    score: averageWeatherConditionScore,
+                    weight: Configuration.surfingWeatherConditionWeight
+                )
+            ]
+        )
+    }
     
     // MARK: - Forecast Hour Selection
     
@@ -452,6 +551,114 @@ struct WeatherSuitabilityScorer: SuitabilityScoringEngine {
         )
     }
     
+    private func surfingWindScore(
+        windSpeed: Double
+    ) -> Double {
+
+        ScoreCalculator.clamp(
+            100 * (
+                1 - windSpeed / Configuration.surfingMaximumWindSpeed
+            )
+        )
+    }
+
+    private func surfingWindGustScore(
+        windGust: Double
+    ) -> Double {
+
+        ScoreCalculator.clamp(
+            100 * (
+                1 - windGust / Configuration.surfingMaximumWindGust
+            )
+        )
+    }
+
+    private func weatherConditionScore(
+        weatherCode: Int
+    ) -> Double {
+
+        switch weatherCode {
+
+        case 0:
+            return 100
+
+        case 1:
+            return 95
+
+        case 2:
+            return 85
+
+        case 3:
+            return 75
+
+        case 45, 48:
+            return 60
+
+        case 51:
+            return 55
+
+        case 53:
+            return 45
+
+        case 55:
+            return 35
+
+        case 56:
+            return 35
+
+        case 57:
+            return 25
+
+        case 61:
+            return 45
+
+        case 63:
+            return 30
+
+        case 65:
+            return 15
+
+        case 66:
+            return 25
+
+        case 67:
+            return 10
+
+        case 71:
+            return 45
+
+        case 73:
+            return 35
+
+        case 75:
+            return 20
+
+        case 77:
+            return 35
+
+        case 80:
+            return 45
+
+        case 81:
+            return 30
+
+        case 82:
+            return 15
+
+        case 85:
+            return 30
+
+        case 86:
+            return 15
+
+        case 95, 96, 99:
+            return 0
+
+        default:
+            return 0
+        }
+    }
+    
     // MARK: - Result Construction
     
     private func makeActivityResult(
@@ -506,10 +713,6 @@ struct WeatherSuitabilityScorer: SuitabilityScoringEngine {
     ) -> String {
         
         guard let score else {
-            if activity == .surfing {
-                return "Marine forecast data is required to calculate surfing suitability."
-            }
-            
             return "Insufficient weather data to calculate suitability."
         }
         
