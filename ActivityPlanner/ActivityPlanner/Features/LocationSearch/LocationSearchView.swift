@@ -216,7 +216,7 @@ struct LocationSearchView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(uiColor: .secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 12))
-        .accessibilityIdentifier("selectedLoctionView")
+        .accessibilityIdentifier("selectedLocationView")
     }
     
     // MARK: - Empty State

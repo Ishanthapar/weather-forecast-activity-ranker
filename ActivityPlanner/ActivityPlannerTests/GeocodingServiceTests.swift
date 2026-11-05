@@ -11,7 +11,7 @@ import XCTest
 
 final class GeocodingServiceTests: XCTestCase {
     private var session: URLSession!
-    private var sut: GeocodingService!
+    private var geocodingService: GeocodingService!
     
     override func setUp() {
         super.setUp()
@@ -22,7 +22,7 @@ final class GeocodingServiceTests: XCTestCase {
         session = URLSession(configuration: configuration)
         
         let apiClient = APIClient(session: session)
-        sut = GeocodingService(apiClient: apiClient)
+        geocodingService = GeocodingService(apiClient: apiClient)
     }
     
     override func tearDown() {
@@ -31,7 +31,7 @@ final class GeocodingServiceTests: XCTestCase {
         
         session = nil
         
-        sut = nil
+        geocodingService = nil
         
         super.tearDown()
     }
@@ -44,7 +44,7 @@ final class GeocodingServiceTests: XCTestCase {
             throw URLError(.badURL)
         }
         
-        let results = try await sut.searchLocations(matching: "   ")
+        let results = try await geocodingService.searchLocations(matching: "   ")
         
         XCTAssertTrue(results.isEmpty)
     }
@@ -57,7 +57,7 @@ final class GeocodingServiceTests: XCTestCase {
             XCTFail("No network request should be made for a one-character query")
             throw URLError(.badURL)
         }
-        let results = try await sut.searchLocations(matching: "M")
+        let results = try await geocodingService.searchLocations(matching: "M")
         
         XCTAssertTrue(results.isEmpty)
     }
@@ -117,7 +117,7 @@ final class GeocodingServiceTests: XCTestCase {
             return (response, Data(responseJSON.utf8))
         }
         
-        let results = try await sut.searchLocations(
+        let results = try await geocodingService.searchLocations(
             matching: "  Mumbai  "
         )
         
@@ -153,7 +153,7 @@ final class GeocodingServiceTests: XCTestCase {
         }
         
         
-        let results = try await sut.searchLocations(
+        let results = try await geocodingService.searchLocations(
             matching: "UnknownCity"
         )
         
@@ -183,7 +183,7 @@ final class GeocodingServiceTests: XCTestCase {
         }
         
         do {
-            let _: [GeocodedLocation] = try await sut.searchLocations(
+            let _: [GeocodedLocation] = try await geocodingService.searchLocations(
                 matching: "Mumbai"
             )
             

@@ -117,6 +117,7 @@ struct ForecastView: View {
                         Text("7-day forecast")
                             .font(.title3)
                             .fontWeight(.semibold)
+                            .accessibilityIdentifier("sevenDayForecastHeading")
                         
                         LazyVStack(spacing: 12) {
                             ForEach(forecast.days) { day in
@@ -129,6 +130,7 @@ struct ForecastView: View {
                     }
                 }
                 .padding()
+                .accessibilityIdentifier("forecastContent")
             }
         }
     }
@@ -255,6 +257,7 @@ private struct ForecastDayRow: View {
         .background(Color(uiColor: .secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("forecastDay_\(day.date)")
     }
 
     private func temperatureColumn(

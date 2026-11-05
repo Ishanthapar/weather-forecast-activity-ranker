@@ -75,6 +75,7 @@
 				Features/Suitability/Views/SuitabilityView.swift,
 				Networking/APIClient.swift,
 				Networking/APIError.swift,
+				UITestSupport/MockServices.swift,
 			);
 			target = 864FFA2F3098894900901765 /* ActivityPlannerUITests */;
 		};

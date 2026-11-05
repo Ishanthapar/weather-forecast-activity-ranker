@@ -31,14 +31,14 @@ final class MockAPIClient: APIClientProtocol {
 final class WeatherForecastServiceTests: XCTestCase {
     
     private var mockAPIClient: MockAPIClient!
-    private var sut: WeatherForecastService!
+    private var weatherForecastService: WeatherForecastService!
     
     override func setUp() {
         super.setUp()
         
         mockAPIClient = MockAPIClient()
         
-        sut = WeatherForecastService(
+        weatherForecastService = WeatherForecastService(
             apiClient: mockAPIClient
         )
     }
@@ -51,7 +51,7 @@ final class WeatherForecastServiceTests: XCTestCase {
             Self.validForecastJSON.utf8
         )
         
-        let forecast = try await sut.fetchForecast(
+        let forecast = try await weatherForecastService.fetchForecast(
             for: makeLocation()
         )
         

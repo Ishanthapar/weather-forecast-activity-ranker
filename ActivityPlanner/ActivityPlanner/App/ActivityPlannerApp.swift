@@ -13,7 +13,26 @@ struct ActivityPlannerApp: App {
     private let container: AppContainer
     
     init() {
-        self.container = AppContainer()
+        let arguments = ProcessInfo.processInfo.arguments
+        
+        let isUITesting = arguments.contains("--uitesting")
+        
+        let scenarioArgument = arguments.first {
+            $0.hasPrefix("--ui-test-scenario")
+        }
+        
+        let scenarioValue = scenarioArgument?
+            .components(separatedBy: "=")
+            .last
+        
+        let scenario = scenarioValue.flatMap {
+            UITestScenario(rawValue: $0)
+        } ?? .success
+        
+        self.container = AppContainer(
+            isUITesting: isUITesting,
+            uiTestScenario: scenario
+        )
     }
     
     var sharedModelContainer: ModelContainer = {

@@ -54,7 +54,7 @@ final class MockURLProtocol: URLProtocol {
 
 final class APIClientTests: XCTestCase {
     private var session: URLSession!
-    private var sut: APIClient!
+    private var apiClient: APIClient!
     
     override func setUp() {
         super.setUp()
@@ -63,7 +63,7 @@ final class APIClientTests: XCTestCase {
         configuration.protocolClasses = [MockURLProtocol.self]
         
         session = URLSession(configuration: configuration)
-        sut = APIClient(session: session)
+        apiClient = APIClient(session: session)
     }
     
     override func tearDown() {
@@ -71,7 +71,7 @@ final class APIClientTests: XCTestCase {
         session.invalidateAndCancel()
         
         session = nil
-        sut = nil
+        apiClient = nil
         
         super.tearDown()
     }
@@ -99,7 +99,7 @@ final class APIClientTests: XCTestCase {
         
         let url = URL(string: "https://example.com/test")!
         
-        let result = try await sut.get(
+        let result = try await apiClient.get(
             TestPayload.self, from: url
         )
         
@@ -128,7 +128,7 @@ final class APIClientTests: XCTestCase {
         
         do {
             
-            let _: TestPayload = try await sut.get(
+            let _: TestPayload = try await apiClient.get(
                 TestPayload.self,
                 from: url
             )
@@ -162,7 +162,7 @@ final class APIClientTests: XCTestCase {
         let url = URL(string: "https://example.com/test")!
         
         do {
-            let _: TestPayload = try await sut.get(
+            let _: TestPayload = try await apiClient.get(
                 TestPayload.self,
                 from: url
             )

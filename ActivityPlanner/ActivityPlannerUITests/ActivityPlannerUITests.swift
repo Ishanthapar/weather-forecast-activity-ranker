@@ -23,15 +23,84 @@ final class ActivityPlannerUITests: XCTestCase {
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testCitySearchAndForecastNavigation() throws {
+
         let app = XCUIApplication()
+
+        app.launchArguments = [
+            "--uitesting",
+            "--ui-test-scenario=success"
+        ]
+
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // XCUIAutomation Documentation
-        // https://developer.apple.com/documentation/xcuiautomation
+        // Verify the initial search screen.
+        let searchField = app.textFields["citySearchField"]
+
+        XCTAssertTrue(
+            searchField.waitForExistence(timeout: 5),
+            "The city search field should be visible after launch."
+        )
+
+        // Search for Mumbai.
+        searchField.tap()
+        searchField.typeText("Mumbai")
+
+        // Verify the Mumbai search result.
+        let mumbaiResult = app.buttons["locationResult_1275339"]
+
+        XCTAssertTrue(
+            mumbaiResult.waitForExistence(timeout: 5),
+            "The Mumbai search result should appear."
+        )
+
+        // Select Mumbai.
+        mumbaiResult.tap()
+
+        // Verify the selected destination.
+        let forecastButton = app.buttons["viewForecastButton"]
+
+        XCTAssertTrue(
+            forecastButton.waitForExistence(timeout: 5),
+            "The selected destination should display the forecast button."
+        )
+
+        // Navigate to the forecast screen.
+        forecastButton.tap()
+
+        // Verify that the forecast content loads.
+        let forecastContent = app.descendants(matching: .any)
+            .matching(identifier: "forecastContent")
+            .firstMatch
+
+        XCTAssertTrue(
+            forecastContent.waitForExistence(timeout: 10),
+            "The forecast content should appear after selecting Mumbai."
+        )
+
+        // Verify the seven-day forecast section.
+        let forecastHeading = app.staticTexts["sevenDayForecastHeading"]
+
+        XCTAssertTrue(
+            forecastHeading.exists,
+            "The seven-day forecast heading should be visible."
+        )
+
+        // Verify that at least one daily forecast row is rendered.
+        let forecastDayRows = app.descendants(matching: .any)
+            .matching(
+                NSPredicate(
+                    format: "identifier BEGINSWITH %@",
+                    "forecastDay_"
+                )
+            )
+
+        XCTAssertTrue(
+            forecastDayRows.firstMatch.waitForExistence(timeout: 5),
+            "At least one daily forecast row should be displayed."
+        )
     }
+
 
     @MainActor
     func testLaunchPerformance() throws {

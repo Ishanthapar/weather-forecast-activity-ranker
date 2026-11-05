@@ -16,7 +16,21 @@ struct AppContainer {
     
     // MARK: - Initialization
     
-    init() {
+    init(
+        isUITesting: Bool = false,
+        uiTestScenario: UITestScenario = .success
+    ) {
+        self.suitabilityScoringEngine = WeatherSuitabilityScorer()
+        
+        guard isUITesting else {
+            self.geocodingService = MockGeocodingService(
+                scenario: uiTestScenario
+            )
+            
+            self.weatherForecastService = MockWeatherForecastService(scenario: uiTestScenario)
+            return
+        }
+        
         let apiClient = APIClient()
         
         self.geocodingService = GeocodingService(
@@ -26,7 +40,5 @@ struct AppContainer {
         self.weatherForecastService = WeatherForecastService(
             apiClient: apiClient
         )
-        
-        self.suitabilityScoringEngine = WeatherSuitabilityScorer()
     }
 }

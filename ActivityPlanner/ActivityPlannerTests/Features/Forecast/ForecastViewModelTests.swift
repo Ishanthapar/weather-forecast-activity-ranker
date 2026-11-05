@@ -55,21 +55,23 @@ private enum MockForecastError: LocalizedError {
 final class ForecastViewModelTests: XCTestCase {
 
     private var mockService: MockWeatherForecastService!
-    private var sut: ForecastViewModel!
+    private var forecastViewModel: ForecastViewModel!
+    private var suitabilityScoringEngine: SuitabilityScoringEngine!
 
     override func setUp() {
         super.setUp()
 
         mockService = MockWeatherForecastService()
+        suitabilityScoringEngine = WeatherSuitabilityScorer()
 
-        sut = ForecastViewModel(
+        forecastViewModel = ForecastViewModel(
             location: makeLocation(),
-            forecastService: mockService
+            forecastService: mockService, suitabilityScoringEngine: suitabilityScoringEngine
         )
     }
 
     func testInitialStateIsIdle() {
-        if case .idle = sut.state {
+        if case .idle = forecastViewModel.state {
             XCTAssertTrue(true)
         } else {
             XCTFail("Expected initial state to be idle")
@@ -80,10 +82,10 @@ final class ForecastViewModelTests: XCTestCase {
         let expectedForecast = makeForecast()
         mockService.forecastToReturn = expectedForecast
 
-        sut.loadForecast()
+        forecastViewModel.loadForecast()
 
         let completed = await waitUntil {
-            if case .loaded = self.sut.state {
+            if case .loaded = self.forecastViewModel.state {
                 return true
             }
             return false
@@ -91,7 +93,7 @@ final class ForecastViewModelTests: XCTestCase {
 
         XCTAssertTrue(completed)
 
-        if case let .loaded(forecast) = sut.state {
+        if case let .loaded(forecast) = forecastViewModel.state {
             XCTAssertEqual(forecast.timezone, "Asia/Kolkata")
             XCTAssertEqual(forecast.days.count, 1)
         } else {
@@ -108,10 +110,10 @@ final class ForecastViewModelTests: XCTestCase {
     func testFailedRequestPublishesError() async {
         mockService.errorToThrow = MockForecastError.failed
 
-        sut.loadForecast()
+        forecastViewModel.loadForecast()
 
         let completed = await waitUntil {
-            if case .failed = self.sut.state {
+            if case .failed = self.forecastViewModel.state {
                 return true
             }
             return false
@@ -119,7 +121,7 @@ final class ForecastViewModelTests: XCTestCase {
 
         XCTAssertTrue(completed)
 
-        if case let .failed(message) = sut.state {
+        if case let .failed(message) = forecastViewModel.state {
             XCTAssertEqual(message, "Forecast request failed")
         } else {
             XCTFail("Expected failed state")
@@ -127,10 +129,10 @@ final class ForecastViewModelTests: XCTestCase {
     }
 
     func testCancelLoadingReturnsStateToIdle() {
-        sut.loadForecast()
-        sut.cancelLoading()
+        forecastViewModel.loadForecast()
+        forecastViewModel.cancelLoading()
 
-        if case .idle = sut.state {
+        if case .idle = forecastViewModel.state {
             XCTAssertTrue(true)
         } else {
             XCTFail("Expected idle state after cancellation")

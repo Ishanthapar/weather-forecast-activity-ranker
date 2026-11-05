@@ -35,20 +35,20 @@ final class MockGeocodingService: GeocodingServiceProtocol {
 @MainActor
 final class LocationSearchViewModelTests: XCTestCase {
     private var mockService: MockGeocodingService!
-    private var sut: LocationSearchViewModel!
+    private var locationSearchViewModel: LocationSearchViewModel!
     
     override func setUp() {
         super.setUp()
         
         mockService = MockGeocodingService()
         
-        sut = LocationSearchViewModel(
+        locationSearchViewModel = LocationSearchViewModel(
             geocodingService: mockService
         )
     }
     
     func testInitialIdleState() {
-        if case .idle = sut.state {
+        if case .idle = locationSearchViewModel.state {
             XCTAssertTrue(true)
         }
         else {
@@ -57,9 +57,9 @@ final class LocationSearchViewModelTests: XCTestCase {
     }
     
     func testShortQueryDoesNotCallAPI() {
-        sut.search(query: "M", debounce: false)
+        locationSearchViewModel.search(query: "M", debounce: false)
         
-        if case .idle = sut.state {
+        if case .idle = locationSearchViewModel.state {
             XCTAssertTrue(true)
         }
         else {
@@ -79,10 +79,10 @@ final class LocationSearchViewModelTests: XCTestCase {
             [mumbai]
         }
         
-        sut.search(query: "Mumbai", debounce: false)
+        locationSearchViewModel.search(query: "Mumbai", debounce: false)
         
         let completed = await waitUntil {
-            if case.results = self.sut.state {
+            if case.results = self.locationSearchViewModel.state {
                 return true
             }
             
@@ -91,7 +91,7 @@ final class LocationSearchViewModelTests: XCTestCase {
         
         XCTAssertTrue(completed)
         
-        if case let .results(locations) = sut.state {
+        if case let .results(locations) = locationSearchViewModel.state {
             XCTAssertEqual(locations.count, 1)
             XCTAssertEqual(locations.first?.name, "Mumbai")
         }
@@ -105,10 +105,10 @@ final class LocationSearchViewModelTests: XCTestCase {
     func testEmptySearchResponseProducesEmptyState() async {
         mockService.searchHandler = { _ in [] }
         
-        sut.search(query: "UnknownCity", debounce: false)
+        locationSearchViewModel.search(query: "UnknownCity", debounce: false)
         
         let completed = await waitUntil {
-            if case .empty = self.sut.state {
+            if case .empty = self.locationSearchViewModel.state {
                 return true
             }
             
@@ -123,10 +123,10 @@ final class LocationSearchViewModelTests: XCTestCase {
             throw MockSearchError.failed
         }
         
-        sut.search(query: "Mumbai", debounce: false)
+        locationSearchViewModel.search(query: "Mumbai", debounce: false)
         
         let completed = await waitUntil {
-            if case .failed = self.sut.state {
+            if case .failed = self.locationSearchViewModel.state {
                 return true
             }
             
@@ -135,7 +135,7 @@ final class LocationSearchViewModelTests: XCTestCase {
         
         XCTAssertTrue(completed)
         
-        if case let .failed(message) = sut.state {
+        if case let .failed(message) = locationSearchViewModel.state {
             XCTAssertEqual(message, "Mock search failed")
         }
         else {
