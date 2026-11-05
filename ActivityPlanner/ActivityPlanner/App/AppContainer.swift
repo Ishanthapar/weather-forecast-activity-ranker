@@ -22,7 +22,7 @@ struct AppContainer {
     ) {
         self.suitabilityScoringEngine = WeatherSuitabilityScorer()
         
-        guard isUITesting else {
+        guard !isUITesting else {
             self.geocodingService = MockGeocodingService(
                 scenario: uiTestScenario
             )
