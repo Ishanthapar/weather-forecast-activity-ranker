@@ -49,6 +49,14 @@ SuitabilityScoringEngine
 
 Dependencies are supplied through initialisers rather than accessed through global singletons.
 
-AppContainer acts as the composition root. It creates the shared networking client and constructs the services and scoring engine that are injected into the application.
+AppContainer acts as the composition root. It creates the shared networking client and constructs the services and scoring engine that are injected into the application. This way production implementations can be replaced with deterministic test doubles and view models and other application components depend on abstractions rather than concrete networking implementations.
 
-This way production implementations can be replaced with deterministic test doubles and view models and other application components depend on abstractions rather than concrete networking implementations.
+# APIs and data sources
+
+### Open-Meteo Geocoding API
+
+Documentation: https://open-meteo.com/en/docs/geocoding-api
+
+### Open-Meteo Forecast API
+
+Documentation: https://open-meteo.com/en/docs
