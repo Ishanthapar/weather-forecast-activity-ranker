@@ -11,6 +11,7 @@ import SwiftUI
 struct LocationSearchView: View {
     @StateObject private var viewModel: LocationSearchViewModel
     @State private var searchQuery = ""
+    @FocusState private var isSearchFieldFocused: Bool
     let weatherForecastService: any WeatherForecastServiceProtocol
     let suitabilityScoringEngine: any SuitabilityScoringEngine
     
@@ -72,6 +73,7 @@ struct LocationSearchView: View {
                 .textInputAutocapitalization(.words)
                 .autocorrectionDisabled()
                 .submitLabel(.search)
+                .focused($isSearchFieldFocused)
                 .accessibilityIdentifier("citySearchField")
             
             if !searchQuery.isEmpty {
@@ -150,6 +152,7 @@ struct LocationSearchView: View {
                     ForEach(locations) { location in
                         Button {
                             viewModel.selectedLocation(location)
+                            isSearchFieldFocused = false
                         } label: {
                             LocationResultRow(
                                 location: location,
