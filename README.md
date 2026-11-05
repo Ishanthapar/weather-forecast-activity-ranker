@@ -7,3 +7,5 @@ This is a native iOS application built with SwiftUI that helps users evaluate we
 The application uses the Open-Meteo Geocoding API to search for locations and the Open-Meteo Forecast API to retrieve weather forecasts.
 
 This project builds a focused, maintainable application while making sound engineering decisions, documenting assumptions, and verifying the behavior of the implementation.
+
+Please refer to PRODUCT_ASSUMPTIONS.md for details about assumptions made during this implementation.
